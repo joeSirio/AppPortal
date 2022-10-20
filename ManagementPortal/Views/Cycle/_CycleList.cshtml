@@ -1,0 +1,56 @@
+﻿@using AppPortal.Data.Core.Enums
+@model List<CycleViewModel>
+
+
+@foreach(var cycle in Model){
+    <div class="cycle-wrapper">
+        <div class="cycle-info">
+            <h4 class="cycle-title">
+                @cycle.Title
+            </h4>
+            <div class="cycle-dates">
+                @cycle.StartDateTime.ToShortDateString() - @cycle.EndDateTime.ToShortDateString()
+            </div>
+            <div class="cycle-controls">
+                <button class="btn btn-primary btn-sm" onclick="onAddForm(this)" data-cycleid="@cycle.Id">Add Form</button>
+                <button class="btn btn-warning btn-sm" onclick="onEditCycle(this)" data-cycleid="@cycle.Id">Edit Group</button>
+                <button class="btn btn-danger btn-sm" onclick="onDeleteCycle(this)" data-cycleid="@cycle.Id">Delete Group</button>
+            </div>
+        </div>      
+
+        <div class="cycle-form-wrapper">
+            <div class="form-header row">
+                <div class="col-3 br-1">Forms</div>
+                <div class="col-2 br-1">Assigned</div>
+                <div class="col-2 br-1">Submitted</div>
+                <div class="col-2 br-1">Denied</div>
+                <div class="col-2 br-1">Accepted</div>
+                <div class="col-1">Tools</div>
+            </div>
+
+            @foreach(var form in cycle.Forms){
+                <div class="form-wrapper row">
+                    <div class="col-3 br-1 form-title">
+                        <a href="/Form/@form.Id">@form.Title</a>
+                    </div>
+                    <div class="col-2 br-1">
+                        <a href="/Applications/@form.Id/@ApplicationStatus.Assigned">@form.Assigned</a>
+                    </div>
+                    <div class="col-2 br-1">
+                        <a href="/Applications/@form.Id/@ApplicationStatus.Submitted">@form.Submitted</a>
+                    </div>
+                    <div class="col-2 br-1">
+                        <a href="/Applications/@form.Id/@ApplicationStatus.Denied">@form.Denied</a>
+                    </div>
+                    <div class="col-2 br-1">
+                        <a href="/Applications/@form.Id/@ApplicationStatus.Accepted">@form.Accepted</a>
+                    </div>
+                    <div class="col-1">
+                        <button class="btn btn-warning" onclick="onEditForm(@form.Id)"><img src="~/images/pencil-fill.svg"/></button>
+                        <button class="btn btn-danger" onclick="onDeleteForm(@form.Id)"><img src="~/images/trash-fill.svg"/></button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

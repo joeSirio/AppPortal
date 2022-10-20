@@ -1,0 +1,14 @@
+D:\git\AppPortal\AppPortal.Data\bin\Debug\net6.0\AppPortal.Data.deps.json
+D:\git\AppPortal\AppPortal.Data\bin\Debug\net6.0\AppPortal.Data.runtimeconfig.json
+D:\git\AppPortal\AppPortal.Data\bin\Debug\net6.0\AppPortal.Data.dll
+D:\git\AppPortal\AppPortal.Data\bin\Debug\net6.0\AppPortal.Data.pdb
+D:\git\AppPortal\AppPortal.Data\obj\Debug\net6.0\AppPortal.Data.csproj.AssemblyReference.cache
+D:\git\AppPortal\AppPortal.Data\obj\Debug\net6.0\AppPortal.Data.GeneratedMSBuildEditorConfig.editorconfig
+D:\git\AppPortal\AppPortal.Data\obj\Debug\net6.0\AppPortal.Data.AssemblyInfoInputs.cache
+D:\git\AppPortal\AppPortal.Data\obj\Debug\net6.0\AppPortal.Data.AssemblyInfo.cs
+D:\git\AppPortal\AppPortal.Data\obj\Debug\net6.0\AppPortal.Data.csproj.CoreCompileInputs.cache
+D:\git\AppPortal\AppPortal.Data\obj\Debug\net6.0\AppPortal.Data.dll
+D:\git\AppPortal\AppPortal.Data\obj\Debug\net6.0\refint\AppPortal.Data.dll
+D:\git\AppPortal\AppPortal.Data\obj\Debug\net6.0\AppPortal.Data.pdb
+D:\git\AppPortal\AppPortal.Data\obj\Debug\net6.0\AppPortal.Data.genruntimeconfig.cache
+D:\git\AppPortal\AppPortal.Data\obj\Debug\net6.0\ref\AppPortal.Data.dll

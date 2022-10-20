@@ -1,0 +1,86 @@
+﻿@model ApplicationViewModel
+
+<div class="application-wrapper">
+    <div class="application-title row">
+        @Html.HiddenFor(m => m.Id)
+        <div class="col-12">
+            @Html.LabelFor(m => m.Title)
+            @Html.EditorFor(m => m.Title)
+        </div>
+    </div>
+    <div class="application-question-wrapper">
+        @foreach(var question in Model.Questions){
+            @Html.Partial("_Question", question)
+        }
+    </div>
+
+    @if(Model.Status == AppPortal.Data.Core.Enums.ApplicationStatus.Assigned){
+        <text>
+            <script>
+                function submitApplication(){
+                    var dto = {
+                        Id: $("#Id").val(),
+                        Title: $("#Title").val(),
+                        Questions: GetQuestionData()
+                    };
+
+                    $.ajax({
+                        url: '/Form/Submit',
+                        data: JSON.stringify(dto),
+                        contentType: 'application/json',
+                        type: 'POST',
+                        success: function(data){
+                            if(data.success)
+                                window.location = '/';
+                        },
+                        error: function(e){
+                            console.log(e);
+                        }
+                    })
+                }
+
+                function GetQuestionData(){
+                    var questionData = []
+                    var questions = $(".question-wrapper");
+                    for(var i = 0; i < questions.length; i++){
+                        var questionType = $(questions[i]).data('questiontype');    
+                        var id = $(questions[i]).data("questionid")
+                        var answer = "";
+
+                        if(questionType === "Text")
+                            answer = $("textarea[id='" + questionType + id + "']").val();
+                        else if(questionType === "YesNo")
+                            answer = $("input[name='" + questionType + id + "']:checked").val();
+                        else if (questionType === "TextIfYes" || questionType === "TextIfNo")
+                            answer = $("input[name='" + questionType + id + "']:checked").val() + "|" + $("textarea[name='" + questionType + id + "']").val();
+                        else if(questionType === "MultipleChoice" || questionType === "MultiSelect")
+                            answer = $("input[name='" + questionType + id + "']:checked").map(function () { return $(this).val(); }).get().join('|');
+
+                        questionData.push({
+                            Id: id,
+                            QuestionType: questionType,
+                            Answer: answer
+                        });
+                    }
+
+                    return questionData;
+                }
+            </script>
+            <button class="btn btn-primary" onclick="submitApplication()">Submit</button>
+        </text>
+    }
+    else{
+        <div class="bg-warning">
+            This application has already been submitted
+        </div>
+    }
+</div>
+
+<script>
+    function toggleTextArea(id, show) {
+        if (show)
+            $("#YesNoTextArea" + id).show();
+        else
+            $("#YesNoTextArea" + id).hide().val("");
+    }
+</script>

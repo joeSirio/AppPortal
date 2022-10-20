@@ -1,0 +1,59 @@
+﻿
+
+<div id="myGrid" class="ag-theme-alpine portal-ag-grid"></div>
+
+
+<script>
+    const gridOptions = {
+        columnDefs: [
+            { field: "id" },
+            { field: "email" },
+            { field: "emailConfirmed" },
+            { field: "phoneNumberConfirmed" },
+            {
+                header: "column",
+                cellRenderer: function (params) {
+                    return '<a class="btn btn-warning" href="/Admin/ManageUser/' + params.data.id + '"> <img src="/images/pencil-fill.svg"/> </a> <button class="btn btn-danger" onclick="deleteUser(' + params.data.id + ')"><img src="/images/trash-fill.svg"/> </button> '
+                }
+            }
+        ],
+
+        defaultColDef: { sortable: true, filter: true, flex: 1 },
+
+        rowSelection: 'single',
+        animateRows: true,
+    };
+
+    $(function () {
+        const eGridDiv = document.getElementById("myGrid");
+        new agGrid.Grid(eGridDiv, gridOptions);
+
+        fetch("/Admin/GetUsers")
+            .then(response => response.json())
+            .then(data => {
+                gridOptions.api.setRowData(data);
+            });
+    })
+
+    function deleteUser(id){
+        $.ajax({
+            url: '/Admin/DeleteUser',
+            data:{id: id},
+            type: 'POST',
+            success:function(data){
+                reloadGrid();
+            },
+            error: function (e){
+                console.log(e);
+            }
+        })
+    }
+
+    function reloadGrid(){
+        fetch("/Admin/GetUsers")
+            .then(response => response.json())
+            .then(data => {
+                gridOptions.api.setRowData(data);
+            });
+    }
+</script>

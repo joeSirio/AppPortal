@@ -1,0 +1,76 @@
+﻿
+
+<div id="ApplicationStatusGrid" class="ag-theme-alpine portal-ag-grid"></div>
+
+
+<script>
+    const gridOptions = {
+        columnDefs: [
+            { field: "id", hide: true },
+            { field: "title" },
+            { field: "statusText", headerName: "Status" },
+            { field: "userEmail", headerName: "User" },
+            {
+                header: "column",
+                cellRenderer: params => {
+                    return '<button class="btn btn-primary" onclick="onTransitionClick(' + params.data.id + ')"> Transition </button>'
+                }
+            }
+        ],
+
+        defaultColDef: { sortable: true, filter: true, flex: 1 },
+
+        rowSelection: 'single',
+        animateRows: true,
+    };
+
+    $(function () {
+        const eGridDiv = document.getElementById("ApplicationStatusGrid");
+        new agGrid.Grid(eGridDiv, gridOptions);
+
+        fetch("/Admin/GetApplications")
+            .then(response => response.json())
+            .then(data => {
+                gridOptions.api.setRowData(data);
+            });
+    })
+
+    function reloadGrid() {
+        fetch("/Admin/GetApplications")
+            .then(response => response.json())
+            .then(data => {
+                gridOptions.api.setRowData(data);
+            });
+    }
+
+    function onTransitionClick(id) {
+        $.ajax({
+            url: '/Admin/TransitionApplication',
+            data: { id: id },
+            success: function (data) {
+                $(".popup-content").html(data);
+                $(".popup-window").css("display", "flex");
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    }
+
+    function onTransitionApplication(id) {
+        var status = $("#Status").val();
+
+        $.ajax({
+            url: '/Admin/TransitionApplication',
+            data: { id: id, status: status },
+            type: 'POST',
+            success: function (data) {
+                closePopup();
+                reloadGrid();
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    }
+</script>

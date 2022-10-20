@@ -1,0 +1,97 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background: #ddd;
+}
+
+label{
+    font-weight:bold;
+}
+
+.form-wrapper {
+    background: #fff;
+    border-radius: 25px;
+    padding: 25px;
+    margin:25px 0;
+}
+
+.form-date-range{
+}
+
+.form-table-header{
+    padding: 10px 0;
+    font-weight:bold;
+}
+
+.form-table-header > div > div{
+    display:flex;
+    align-items: center;
+}
+
+.form-table-header p{
+    margin:0;
+}
+
+.application-status-wrapper {
+    padding: 10px 0;
+    border-top: 1px solid #ccc;
+}
+
+.application-status-wrapper:last-child {
+    border-bottom: 1px solid #ccc;
+}
+
+input, textarea{
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+input:focus, textarea:focus{
+    border:1px solid #555;
+}
+
+.application-title input{
+    width:100%;
+}
+
+.application-title{
+    background:#fff;
+    padding:25px;
+    border-radius:5px;
+}
+
+.question-wrapper{
+    background:#fff;
+    padding:10px 25px;
+    border-radius:5px;
+    margin-top:10px;
+}
+
+.question-text{
+    font-weight:bold;
+    border-bottom 1px solid #ccc;
+}
+
+.question-wrapper textarea{
+    width:100%;
+    resize:none;
+    height:75px;
+}
+
+.question-wrapper input{
+    width:100%;
+}

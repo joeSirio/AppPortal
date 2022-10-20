@@ -1,0 +1,31 @@
+﻿@model CycleViewModel
+
+<div class="close-popup" onclick="hidePopup()">x</div>
+<form id="CycleForm" onsubmit="onSubmitCycle(this)">
+    @Html.HiddenFor(m => m.Id)
+    <div class="row">
+        <div class="col-3">
+            <label>Title:</label>
+        </div>
+        <div class="col-9">
+            @Html.EditorFor(m => m.Title)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <label>Start Date:</label>
+        </div>
+        <div class="col-9">
+            @Html.EditorFor(m => m.StartDateTime)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <label>End Date:</label>
+        </div>
+        <div class="col-9">
+            @Html.EditorFor(m => m.EndDateTime)
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success">Submit</button>
+</form>

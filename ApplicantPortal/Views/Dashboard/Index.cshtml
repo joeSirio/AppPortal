@@ -1,0 +1,58 @@
+﻿@model List<FormViewModel>
+
+<div class="row">
+    <div class="col-12">
+        @foreach(var form in Model){
+            <div class="form-wrapper">
+                <div class="form-information">
+                    <h3>@form.Title</h3>
+                    <div class="form-date-range">
+                        @form.BeginDate.ToShortDateString() - @form.EndDate.ToShortDateString()
+                    </div>
+                </div>
+
+                <div class="form-table-header">
+                    <div class="row">
+                        <div class="col-6">
+                            <p>Application Title</p>
+                        </div>
+                        <div class="col-3">
+                            <p>Status</p>
+                        </div>
+                        <div class="col-3">
+                            <button class="btn btn-success" onclick="newApplication(@form.Id)">New Application</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-application-list" data-formId="@form.Id">
+                    @foreach(var application in form.Applications){
+                        @Html.Partial("_Application", application);
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function newApplication(formId){
+        $.ajax({
+            url: '/Dashboard/NewApplication',
+            data: { formId: formId },
+            type: 'POST',
+            success: function(data){
+                if(data){
+                    $(".form-application-list[data-formid='" + formId + "']").append(data);
+                }
+            },
+            error: function(e){
+                console.log(e);
+            }
+        })
+    }
+
+    function beginApplication(id){
+        window.location = '/Form/Edit/' + id
+    }
+</script>

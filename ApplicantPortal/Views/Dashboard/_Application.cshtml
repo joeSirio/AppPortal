@@ -1,0 +1,24 @@
+﻿@using AppPortal.Data.Core.Enums
+@model ApplicationStatusViewModel
+
+<div class="application-status-wrapper">
+    <div class="row">
+        <div class="col-6">
+            @if(string.IsNullOrEmpty(Model.Title)){
+                <text>New Application</text>
+            }
+            else{
+                @Model.Title
+            }
+        </div>
+        <div class="col-3">
+            @Model.Status
+        </div>
+        <div class="col-3">
+            @if (Model.Status == ApplicationStatus.Assigned)
+            {
+                <button class="btn btn-primary" onclick="beginApplication(@Model.Id)">Begin</button>
+            }
+        </div>
+    </div>
+</div>

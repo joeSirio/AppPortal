@@ -1,0 +1,38 @@
+﻿
+
+<div id="ApplicantsGrid" class="ag-theme-alpine portal-ag-grid"></div>
+
+<button type="button" class="btn btn-primary" onclick="onAssignSelected()">Assign Selected</button>
+
+<script>
+    $(function () {
+        const eGridDiv = document.getElementById("ApplicantsGrid");
+        new agGrid.Grid(eGridDiv, applicantGridOptions);
+
+        const formId = $("#ApplicationsGrid").data('formid');
+
+        fetch("/Applications/GetApplicantList/" + formId)
+            .then(response => response.json())
+            .then(data => {
+                applicantGridOptions.api.setRowData(data);
+            });
+    })
+
+    function onAssignSelected() {
+        var data = applicantGridOptions.api.getSelectedRows();
+        var result = data.map(a => a.userId);
+
+        $.ajax({
+            url: '/Applications/AssignUsers',
+            data: { applicants: result, formId: $("#ApplicationsGrid").data('formid') },
+            type: 'POST',
+            success: function (data) {
+                $(".popup-close").trigger('click');
+                reloadGrid();
+            },
+            error: function(e){
+                console.log(e);
+            }
+        })
+    }
+</script>

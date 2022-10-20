@@ -1,0 +1,71 @@
+﻿@model UserViewModel
+
+@Html.HiddenFor(m => m.Id)
+<div class="col-6">
+    @Html.LabelFor(m => m.Email)
+    @Html.EditorFor(m => m.Email)
+</div>
+
+<div class="col-6">
+    @Html.LabelFor(m => m.EmailConfirmed)
+    @Html.DisplayFor(m => m.EmailConfirmed)
+</div>
+
+<div class="col-6">
+    @Html.LabelFor(m => m.PhoneNumberConfirmed)
+    @Html.DisplayFor(m => m.PhoneNumberConfirmed)
+</div>
+
+<div class="col-12">
+@Html.LabelFor(m => m.Roles)
+
+    <div class="row role-wrapper">
+        @foreach(var role in ViewData["Roles"] as List<RoleViewModel>) {            
+            <div class="col-4">
+            <label>@role.Name</label>
+                <input 
+                    type="checkbox" 
+                    value="@role.Id" 
+                    class="role-checkbox"
+                    data-name="@role.Name"
+                    @if(Model.Roles.Any(a => a == role.Name))
+                    { 
+                        <text>checked="checked"</text> 
+                    } 
+                />
+            </div>
+        }
+    </div>
+</div>
+
+<div class="col-12">
+    <button class="btn btn-primary" onclick="onSubmit()">Submit</button>
+</div>
+
+<script>
+    function onSubmit(){
+        var dto = {
+            Id: $("#Id").val(),
+            Email: $("#Email").val(),
+            Roles: []
+        };
+
+        var checked = $(".role-checkbox:checkbox:checked");
+
+        for(var i = 0; i < checked.length; i++){
+            dto.Roles.push($(checked[i]).data("name"));
+        }
+
+        $.ajax({
+            url: '/Admin/ManageUser',
+            data: dto,
+            type: 'POST',
+            success: function(data){
+                window.location = '/Admin/UserManager';
+            },
+            error: function(e){
+                console.log(e);
+            }
+        })
+    }
+</script>

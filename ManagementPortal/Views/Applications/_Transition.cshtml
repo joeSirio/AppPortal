@@ -1,0 +1,89 @@
+﻿@using AppPortal.Data.Core.Enums
+@model ApplicationViewModel
+
+<div class="row">
+    <div class="col-8">
+        <div class="application-content">
+            <div class="form-title">
+                Form: @Model.FormTitle
+            </div>
+            <div class="application-title">
+                Application: @Model.Title
+            </div>
+            <div class="application-answers">
+                @foreach(var answer in Model.Answers){
+                    <div class="answer-wrapper">
+                        <div class="question-text">
+                            @answer.QuestionText    
+                        </div>
+                        <div class="answer-value">
+                            @switch(answer.QuestionType){
+                                case QuestionType.Text:
+                                    @Html.DisplayTextFor(m => answer.Text)
+                                    break;
+                                case QuestionType.YesNo:
+                                    <label>Yes</label>
+                                    <input type="radio" name="@answer.QuestionType@answer.Id" value="Yes" @if(answer.Text == "Yes"){<text>checked</text>} disabled />
+                                    <label>No</label>
+                                    <input type="radio" name="@answer.QuestionType@answer.Id" value="No" @if(answer.Text == "No"){<text>checked</text>} disabled />
+                                    break;
+                                case QuestionType.TextIfYes:
+                                    var answerSelectedTIF = answer.Text.Split('|')[0];
+                                    <label>Yes</label>
+                                    <input type="radio" name="@answer.QuestionType@answer.Id" value="Yes" @if(answerSelectedTIF == "Yes"){<text>checked</text>} disabled />
+                                    <label>No</label>
+                                    <input type="radio" name="@answer.QuestionType@answer.Id" value="No" @if(answerSelectedTIF == "No"){<text>checked</text>} disabled />
+
+                                    @if(answerSelectedTIF == "Yes"){
+                                        <div class="yn-answer-text">
+                                            @answer.Text.Split('|')[1]
+                                        </div>
+                                    }
+                                    break;
+                                case QuestionType.TextIfNo:
+                                    var answerSelectedTIN = answer.Text.Split('|')[0];
+                                    <label>Yes</label>
+                                    <input type="radio" name="@answer.QuestionType@answer.Id" value="Yes" @if(answerSelectedTIN == "Yes"){<text>checked</text>} disabled />
+                                    <label>No</label>
+                                    <input type="radio" name="@answer.QuestionType@answer.Id" value="No" @if(answerSelectedTIN == "No"){<text>checked</text>} disabled />
+                                    
+                                    @if(answerSelectedTIN == "No"){
+                                        <div class="yn-answer-text">
+                                            @answer.Text.Split('|')[1]
+                                        </div>
+                                    }
+                                    break;
+                                case QuestionType.MultipleChoice:
+                                    @foreach (var answerOption in answer.AnswerOptions.Split('|'))
+                                    {
+                                        <label>@answerOption</label>
+                                        <input type="radio" name="@answer.QuestionType@answer.Id" value="@answerOption" @if(answer.Text == answerOption){<text>checked</text>} disabled />
+                                    }
+                                    break;
+                                case QuestionType.MultiSelect:
+                                    var answerSelected = answer.Text.Split('|');
+                                    @foreach (var answerOption in answer.AnswerOptions.Split('|'))
+                                    {
+                                        <label>@answerOption</label>
+                                        <input type="checkbox" name="@answer.QuestionType@answer.Id" value="@answerOption" @if(answerSelected.Contains(answerOption)){<text>checked</text>} disabled />
+                                    }
+                                    break;
+                                case QuestionType.NoAnswer:
+                                default:
+                                    break;
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-4 sidebar">
+        ApplicationStatus: @Model.StatusText
+        <hr/>
+        <div class="transition-buttons">
+            <button class="btn btn-success" onclick="onApproveApplication(@Model.Id)">Approve</button>
+            <button class="btn btn-danger" onclick="onRejectApplication(@Model.Id)">Reject</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+﻿
+
+<button type="button" class="btn btn-primary" onclick="addRole()">Add Role</button>
+
+<div id="AddRolePopup">
+    <div class="role-popup-wrapper">
+        <label>Role Name:</label>
+        <br/>
+        <input id="RoleName" />
+        <br />
+        <button type="button" class="btn btn-primary" style="margin-top:15px;" onclick="addNewRole()">Submit</button>
+        <div class="close-role-popup" onclick="closeRolePopup()">X</div>
+    </div>
+</div>
+
+<div id="RoleGrid" class="ag-theme-alpine portal-ag-grid"></div>
+
+
+<script>
+    const gridOptions = {
+        columnDefs: [
+            { field: "id" },
+            { field: "name" },
+            {
+                header: "column",
+                cellRenderer: function (params) {
+                    return '<button class="btn btn-danger" onclick="deleteRole(' + params.data.id + ')"> Delete </button>'
+                }
+            }
+        ],
+
+        defaultColDef: { sortable: true, filter: true, flex: 1 },
+
+        rowSelection: 'single',
+        animateRows: true,
+    };
+
+    $(function () {
+        const eGridDiv = document.getElementById("RoleGrid");
+        new agGrid.Grid(eGridDiv, gridOptions);
+
+        fetch("/Admin/GetRoles")
+            .then(response => response.json())
+            .then(data => {
+                gridOptions.api.setRowData(data);
+            });
+    })
+
+    function addRole(){
+        $("#AddRolePopup").css("display", "flex");
+    }
+
+    function addNewRole(){
+        var dto = { 
+            Name: $("#RoleName").val() 
+        };
+
+        $.ajax({
+            url: '/Admin/AddRole',
+            data: dto,
+            type: 'POST',
+            success: function(data){
+                if(data.success){
+                    reloadGrid();
+                    closeRolePopup();
+                }
+            },
+            error: function(e){
+                console.log(e);
+            }
+        })
+    }
+
+    function deleteRole(id){
+        $.ajax({
+            url: '/Admin/DeleteRole',
+            data: { id: id },
+            type: 'POST',
+            success: function(data){
+                if(data.success) {
+                    reloadGrid();
+                }
+            },
+            error: function(e) {
+                console.log(e);
+            }
+        })
+    }
+
+    function reloadGrid(){
+        fetch("/Admin/GetRoles")
+            .then(response => response.json())
+            .then(data => {
+                gridOptions.api.setRowData(data);
+            });
+    }
+
+    function closeRolePopup(){
+        $("#AddRolePopup").hide();
+        $("#RoleName").val("");
+    }
+</script>

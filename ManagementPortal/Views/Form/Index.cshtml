@@ -1,0 +1,110 @@
+﻿@using AppPortal.Data.Core.Enums
+@model FormViewModel
+
+
+<div class="form-wrapper">
+    <div class="row">
+        <h1>@Model.Title</h1>
+    </div>
+    <div class="form-question-wrapper">
+        @foreach (var question in Model.Questions)
+        {
+            <div class="question-wrapper">
+                <div class="row">
+                    <div class="col-12">
+                        @question.Question
+                    </div>
+                </div>
+                <div class="row">
+                    @switch (question.QuestionType)
+                    {
+                        case QuestionType.Text:
+                            <div class="col-12">
+                                <textarea></textarea>
+                            </div>
+                            break;
+                        case QuestionType.YesNo:
+                            <div class="col-3">
+                                <label for="@question.Id">Yes</label>
+                                <input type="radio" id="Yes@(question.Id)" name="YesNo@(question.Id)" value="Yes" />
+                            </div>
+                            <div class="col-3">
+                                <label for="@question.Id">No</label>
+                                <input type="radio" id="No@(question.Id)" name="YesNo@(question.Id)" value="No" />
+                            </div>
+                            break;
+                        case QuestionType.TextIfYes:
+                            <div class="col-3">
+                                <label for="@question.Id">Yes</label>
+                                <input type="radio" id="Yes@(question.Id)" name="YesNo@(question.Id)" value="Yes" onchange="toggleTextArea(@question.Id, true)" />
+                            </div>
+                            <div class="col-3">
+                                <label for="@question.Id">No</label>
+                                <input type="radio" id="No@(question.Id)" name="YesNo@(question.Id)" value="No" onchange="toggleTextArea(@question.Id, false)"  />
+                            </div>
+                            <div class="col-12">
+                                <textarea id="YesNoTextArea@(question.Id)" style="display:none"></textarea>
+                            </div>
+                            break;
+                        case QuestionType.TextIfNo:
+                            <div class="col-3">
+                                <label for="@question.Id">Yes</label>
+                                <input type="radio" id="Yes@(question.Id)" name="YesNo@(question.Id)" value="Yes" onchange="toggleTextArea(@question.Id, false)" />
+                            </div>
+                            <div class="col-3">
+                                <label for="@question.Id">No</label>
+                                <input type="radio" id="No@(question.Id)" name="YesNo@(question.Id)" value="No" onchange="toggleTextArea(@question.Id, true)" />
+                            </div>
+                            <div class="col-12">
+                                <textarea id="YesNoTextArea@(question.Id)" style="display:none"></textarea>
+                            </div>
+                            break;
+                        case QuestionType.MultipleChoice:
+                            @foreach (var choice in question.AnswerOptions.Split('|'))
+                            {
+                                <div class="col-3">
+                                    <input type="radio" id="@choice@question.Id" name="answerOption@(question.Id)" value="@choice"/>
+                                    <label for="@choice@question.Id">@choice</label>
+                                </div>
+                            }
+                            break;
+                        case QuestionType.MultiSelect:
+                            @foreach (var choice in question.AnswerOptions.Split('|'))
+                            {
+                                <div class="col-3">
+                                    <input type="checkbox" id="@choice@question.Id" name="answerOption@(question.Id)" value="@choice" />
+                                    <label for="@choice@question.Id">@choice</label>
+                                </div>
+                            }
+                            break;
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function toggleTextArea(id, show){
+        if(show)
+            $("#YesNoTextArea" + id).show();
+        else
+            $("#YesNoTextArea" + id).hide();
+    }
+</script>
+
+<style>
+    .question-wrapper {
+        border-radius: 15px;
+        background: #fff;
+        padding: 15px;
+        margin-top: 15px;
+        position: relative;
+    }
+
+    .question-wrapper textarea {
+        resize: none;
+        height: 75px;
+        width: 100%;
+    }
+</style>

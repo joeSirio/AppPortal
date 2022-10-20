@@ -1,0 +1,48 @@
+﻿<div class="row">
+    <a class="col-3 admin-link" href="/Admin/UserManager">
+        <div class="link-contents">
+            <h2>User Manager</h2>
+            <p class="summary">Manage Users and Assign Roles</p>
+        </div>
+    </a>
+    <a class="col-3 admin-link" href="/Admin/ManageApplicationStatus">
+        <div class="link-contents">
+            <h2>Application Status</h2>
+            <p class="summary">Manage Application Status</p>
+        </div>
+    </a>
+    <a class="col-3 admin-link" href="/Admin/ManageRoles">
+        <div class="link-contents">
+            <h2>Role Manager</h2>
+            <p class="summary">Manage Roles</p>
+        </div>
+    </a>
+</div>
+
+<style>
+    .admin-link{
+        cursor:pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px auto;
+        color: #000;
+        text-decoration: none;
+    }
+
+    .link-contents{
+        background: #fff;
+        border-radius: 15px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding:20px;
+        height:150px;
+    }
+
+    .link-contents:hover{
+        transform:scale(1.05);
+    }
+</style>

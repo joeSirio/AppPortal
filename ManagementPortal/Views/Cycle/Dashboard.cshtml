@@ -1,0 +1,184 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+@model List<CycleViewModel>
+
+<div class="dashboard-toolbar">
+    <button class="btn btn-primary" onclick="onAddCycle()">Add Group</button>
+</div>
+
+<div id="CycleList">
+    @Html.Partial("_CycleList.cshtml", Model)
+    <div class="cycle-list-overlay">
+        <img src="~/images/reload.svg" />
+    </div>
+</div>
+
+<div class="popup">
+    <div id="CycleEditorPopup"></div>
+</div>
+
+<style>
+    #CycleList {
+        position:relative;
+    }
+
+    .popup {
+        background: rgba(0,0,0,0.5);
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        display: none;
+        top: 0;
+        left: 0;
+    }
+
+    #CycleEditorPopup {
+        position: absolute;
+        top: 25%;
+        left: 25%;
+        right: 25%;
+        width: auto;
+        height: auto;
+        padding: 50px 25px;
+        z-index: 999;
+        background: #fff;
+        border-radius: 15px;
+    }
+
+    .close-popup {
+        position: absolute;
+        top: 10px;
+        right: 25px;
+        cursor: pointer;
+    }
+
+    .cycle-list-overlay{
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        background:rgba(0,0,0,0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cycle-list-overlay img{
+        width:50px;
+    }
+    
+    .form-wrapper {
+        padding: 5px 0;
+    }
+
+    .form-wrapper .btn {
+        padding: 2px 5px;
+    }
+</style>
+
+<script>
+    function onAddCycle() {
+        $.ajax({
+            url: '/Cycle/Edit/0',
+            success: function (data) {
+                $("#CycleEditorPopup").html(data);
+                $(".popup").show();
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    }
+
+    function onAddForm(sender) {
+        var url = '/Form/Add/' + $(sender).data('cycleid');
+        window.location = url;
+    }
+
+    function onEditCycle(sender) {
+        $.ajax({
+            url: '/Cycle/Edit/' + $(sender).data('cycleid'),
+            success: function (data) {
+                $("#CycleEditorPopup").html(data);
+                $(".popup").show();
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    }
+
+    function onDeleteCycle(sender) {
+        $.ajax({
+            url: '/Cycle/Delete/' + $(sender).data('cycleid'),
+            type: 'POST',
+            success: function (data) {
+                refreshData()
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    }
+
+    function hidePopup() {
+        $("#CycleEditorPopup").html("");
+        $(".popup").hide();
+    }
+
+    function onSubmitCycle(e) {
+        event.preventDefault();
+        var form = $(e).serialize();
+
+        $("#CycleEditorPopup").html("")
+        $(".popup").hide();
+
+        $.ajax({
+            url: '/Cycle/Edit',
+            data: form,
+            type: 'post',
+            success: function (data) {
+                refreshData();
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    }
+    
+    function onEditForm(id){
+        window.location = '/Form/Edit/' + id;
+    }
+    
+    function onDeleteForm(id){
+        event.preventDefault();
+
+        $.ajax({
+            url: '/Form/Delete/' + id,
+            type: 'POST',
+            success:function(data){
+                refreshData();
+            },
+            error: function(e){
+                console.log(e);
+            }
+        })
+    }
+
+    function refreshData(){
+        $(".cycle-list-overlay").css('display', 'flex');
+        $.ajax({
+            url: '/Cycle/GetCycleList',
+            success:function(data){
+                $("#CycleList").html(data);
+                $(".cycle-list-overlay").hide();
+            },
+            error:function(e){
+                console.log(e);
+                $(".cycle-list-overlay").hide();
+            }
+        })
+    }
+</script>

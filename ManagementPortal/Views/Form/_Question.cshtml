@@ -1,0 +1,31 @@
+﻿@using AppPortal.Data.Core.Enums
+@model FormQuestionViewModel
+
+<div class="question-wrapper" data-id="@Model.Id">
+    <button class="btn btn-danger delete-question" onclick="onDeleteQuestion(this)"><img src="~/images/trash-fill.svg"/></button>
+    <div class="row">
+        <div class="col-10">
+            <div class="row">
+                <div class="col-12">
+                    <label>Question Text:</label>
+                    @Html.EditorFor(m => m.Question)
+                </div>
+            </div>
+            <div class="row answer-options" style=@(Model.QuestionType != QuestionType.MultipleChoice && Model.QuestionType != QuestionType.MultiSelect ? "display:none" : "")>
+                <div class="col-12">
+                    <label>Answer Options</label>
+                    <p class="answer-option-hint">Separate answers with a | character (example: a|b|c)</p>
+                    @Html.EditorFor(m => m.AnswerOptions)
+                </div>
+            </div>
+        </div>
+        <div class="col-2 form-question-options">
+            <div class="row">
+                <div class="col-12">
+                    <label>Question Type</label>
+                    @Html.DropDownListFor(m => m.QuestionType, Html.GetEnumSelectList<QuestionType>(), new { onchange = "onQuestionTypeChange(this)" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

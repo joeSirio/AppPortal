@@ -1,0 +1,70 @@
+﻿@using AppPortal.Data.Core.Enums
+@model QuestionViewModel
+
+<div class="question-wrapper row" data-questionId="@Model.Id" data-questionType="@Model.Type">
+    <div class="question-text">
+        @Html.DisplayFor(m => m.Question)
+    </div>
+
+    @switch(Model.Type){
+        case QuestionType.Text:
+            <div class="col-12">
+                @Html.TextAreaFor(m => m.Answer, new { id = string.Format("Text{0}", Model.Id), name = string.Format("{0}{1}", Model.Type, Model.Id) })
+            </div>
+            break;
+        case QuestionType.YesNo:
+            <div class="col-3">
+                <label for="@Model.Id">Yes</label>
+                <input type="radio" id="Yes@(Model.Id)" name="@(Model.Type)@(Model.Id)" value="Yes" />
+            </div>
+            <div class="col-3">
+                <label for="@Model.Id">No</label>
+                <input type="radio" id="No@(Model.Id)" name="@(Model.Type)@(Model.Id)" value="No" />
+            </div>
+            break;
+        case QuestionType.TextIfYes:
+            <div class="col-3">
+                <label for="@Model.Id">Yes</label>
+                <input type="radio" id="Yes@(Model.Id)" name="@(Model.Type)@(Model.Id)" value="Yes" onchange="toggleTextArea(@Model.Id, true)" />
+            </div>
+            <div class="col-3">
+                <label for="@Model.Id">No</label>
+                <input type="radio" id="No@(Model.Id)" name="@(Model.Type)@(Model.Id)" value="No" onchange="toggleTextArea(@Model.Id, false)" />
+            </div>
+            <div class="col-12">
+                <textarea id="YesNoTextArea@(Model.Id)" name="@(Model.Type)@(Model.Id)" style="display:none"></textarea>
+            </div>
+            break;
+        case QuestionType.TextIfNo:
+            <div class="col-3">
+                <label for="@Model.Id">Yes</label>
+                <input type="radio" id="Yes@(Model.Id)" name="@(Model.Type)@(Model.Id)" value="Yes" onchange="toggleTextArea(@Model.Id, false)" />
+            </div>
+            <div class="col-3">
+                <label for="@Model.Id">No</label>
+                <input type="radio" id="No@(Model.Id)" name="@(Model.Type)@(Model.Id)" value="No" onchange="toggleTextArea(@Model.Id, true)" />
+            </div>
+            <div class="col-12">
+                <textarea id="YesNoTextArea@(Model.Id)" name="@(Model.Type)@(Model.Id)" style="display:none"></textarea>
+            </div>
+            break;
+        case QuestionType.MultipleChoice:
+            @foreach (var choice in Model.AnswerOptions)
+            {
+                <div class="col-3">
+                    <input type="radio" id="@choice@Model.Id" name="@(Model.Type)@(Model.Id)" value="@choice" />
+                    <label for="@choice@Model.Id">@choice</label>
+                </div>
+            }
+            break;
+        case QuestionType.MultiSelect:
+            @foreach (var choice in Model.AnswerOptions)
+            {
+                <div class="col-3">
+                    <input type="checkbox" id="@choice@Model.Id" name="@(Model.Type)@(Model.Id)" value="@choice" />
+                    <label for="@choice@Model.Id">@choice</label>
+                </div>
+            }
+            break;
+    }
+</div>

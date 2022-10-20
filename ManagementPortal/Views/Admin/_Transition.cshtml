@@ -1,0 +1,19 @@
+﻿@using AppPortal.Data.Core.Enums
+@model ApplicationViewModel
+
+<div class="application-information">
+    <label>Title:</label> @Model.Title
+    <br/>
+    <label>Current Status:</label> @Model.StatusText
+</div>
+
+<hr />
+
+<div class="status-ddl">
+    @Html.LabelFor(m => m.Status)
+    @Html.DropDownListFor(m => m.Status, Html.GetEnumSelectList<ApplicationStatus>())
+</div>
+
+<div class="submit-button-wrapper">
+    <button class="btn btn-primary" onClick="onTransitionApplication(@Model.Id)">Submit</button>
+</div>

@@ -1,0 +1,145 @@
+﻿@using AppPortal.Data.Core.Enums
+@model FormViewModel
+
+<form class="form-edit-wrapper" onsubmit="onFormSubmit(this)">
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.CycleId)
+    <div class="row">
+        <label>Title</label>
+        @Html.EditorFor(m => m.Title)
+    </div>
+    <div class="form-question-tools">
+        <button class="btn btn-primary" type="button" onclick="onAddQuestion()">Add Question</button>
+        <button class="btn btn-success" type="submit">Submit</button>
+    </div>
+    <div class="form-question-wrapper">
+        @foreach (var question in Model.Questions)
+        {
+            @Html.Partial("_Question", question)
+        }
+    </div>
+</form>
+
+<script>
+    function onAddQuestion() {
+        event.preventDefault();
+
+        $.ajax({
+            url: '/Form/AddQuestion',
+            success: function (data) {
+                $('.form-question-wrapper').append(data);
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    }
+
+    function onQuestionTypeChange(sender) {
+        var answerOption = $($($(sender).closest('.question-wrapper')[0]).find('.answer-options')[0]);
+
+        if ($(sender).val() == @((int)QuestionType.MultipleChoice) || $(sender).val() == @((int)QuestionType.MultiSelect))
+            answerOption.show()
+        else
+            answerOption.hide()
+    }
+
+    function onFormSubmit(sender) {
+        event.preventDefault();
+
+        var model = {
+            Id: $("#Id").val(),
+            Title: $("#Title").val(),
+            CycleId: $("#CycleId").val(),
+            Questions: []
+        }
+
+        $('.question-wrapper').each(function (e) {
+            var questionModel = {
+                Id: $(this).data('id'),
+                Question: $(this).find('#Question').val(),
+                QuestionType: parseInt($(this).find('#QuestionType').val()),
+                AnswerOptions: $(this).find('#AnswerOptions').val()
+            };
+            model.Questions.push(questionModel);
+        })
+
+
+        $.ajax({
+            url: '/Form/Edit',
+            data: JSON.stringify(model),
+            contentType: 'application/json',
+            type: 'POST',
+            success: function (data) {
+                debugger;
+                console.log(data);
+                window.location = '/Cycle/Dashboard'
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    }
+    
+    function onDeleteQuestion(sender) {
+        event.preventDefault();
+
+        var $wrapper = $($(sender).parent());
+        var id = $wrapper.data('id');
+        if(id > 0){
+            $.ajax({
+                url: '/Form/DeleteQuestion/' + id,
+                type: 'POST',
+                success: function(data){
+                    $wrapper.remove();
+                },
+                error: function(e){
+                    console.log(e);
+                }
+            })
+        }
+        else
+            $wrapper.remove();
+    }
+</script>
+
+<style>
+    .form-question-tools {
+        margin-top: 15px;
+    }
+
+    .question-wrapper {
+        border-radius: 15px;
+        background: #fff;
+        padding: 15px;
+        margin-top: 15px;
+        position: relative;
+    }
+
+    .question-wrapper input {
+        margin-left: 15px;
+        width: 95%;
+    }
+
+    .question-wrapper .delete-question {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 2px 5px;
+    }
+
+    .question-wrapper label {
+        padding: 5px 12px;
+    }
+
+    .question-wrapper .form-question-options label {
+        padding: 5px 0;
+    }
+
+    .question-wrapper .answer-option-hint {
+        font-style: italic;
+        margin-bottom: 0;
+        padding-left: 15px;
+        font-size: 12px;
+    }
+</style>

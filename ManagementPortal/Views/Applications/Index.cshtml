@@ -1,0 +1,182 @@
+﻿@using AppPortal.Data.Core.Enums
+@model Tuple<int, ApplicationStatus>
+
+<div>
+    <h3>Status: @Model.Item2</h3>
+</div>
+
+@if (Model.Item2 == ApplicationStatus.Assigned)
+{
+    <button type="button" class="btn btn-primary" onclick="onAssignUser()">Assign Users</button>
+    <button type="button" class="btn btn-success" onclick="onInviteUser()">Invite Users</button>
+}
+
+<div id="ApplicationsGrid" class="ag-theme-alpine portal-ag-grid" data-formId="@Model.Item1"></div>
+
+<script>
+    const applicantGridOptions = {
+        columnDefs: [
+            {
+                field: "assigned",
+                headerName: "Select",
+                cellRenderer: params => { return "" },
+                checkboxSelection: true,
+                headerCheckboxSelection: params => {
+                    const displayedColumns = params.columnApi.getAllDisplayedColumns();
+                    return displayedColumns[0] === params.column;
+                }
+            },
+            { field: "assigned" },
+            { field: "userId" },
+            { field: "email" }
+        ],
+
+        defaultColDef: { sortable: true, filter: true, flex: 1 },
+
+        rowSelection: 'multiple',
+        suppressRowClickSelection: true,
+
+        isRowSelectable: (params) => {
+            return !!params.data && params.data.assigned !== true;
+        },
+
+        animateRows: true,
+    };
+
+    const gridOptions = {
+        columnDefs: [
+            { field: "id", hide: true },
+            { field: "title" },
+            { field: "statusText", headerName: "Status" },
+            { field: "userEmail" },
+            @if (Model.Item2 != ApplicationStatus.Assigned)
+            {
+                <text>
+                    {
+                        field: "",
+                        cellRenderer: params => {
+                            return '<button class="btn btn-primary" onclick="onTransition(' + params.data.id + ')"> Transition </button>' 
+                        }
+                    }
+                </text>
+            }
+        ],
+
+        defaultColDef: { sortable: true, filter: true, flex: 1 },
+
+        rowSelection: 'single',
+        animateRows: true,
+    };
+
+    $(function () {
+        const eGridDiv = document.getElementById("ApplicationsGrid");
+        new agGrid.Grid(eGridDiv, gridOptions);
+
+        fetch("/Applications/GetApplications/@Model.Item1/@Model.Item2")
+            .then(response => response.json())
+            .then(data => {
+                gridOptions.api.setRowData(data);
+            });
+    })
+
+    function onAssignUser() {
+        $.ajax({
+            url: '/Applications/Applicants',
+            type: 'GET',
+            success: function(data){
+                $(".popup-content").html(data);
+                $(".popup-window").css("display", "flex");
+            },
+            error: function(e){
+                console.log(e);
+            }
+        })
+    }
+
+    function onInviteUser() {
+        $.ajax({
+            url: '/Applications/InviteApplicant',
+            type: 'GET',
+            success: function (data) {
+                $(".popup-content").html(data);
+                $(".popup-window").css("display", "flex");
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    }
+
+    function onInviteNewUser(){
+        var model = {
+            formId: @Model.Item1,
+            email: $("#Email").val()
+        }
+
+        $.ajax({
+            url: '/Applications/InviteApplicant',
+            data: model,
+            type:'POST',
+            success: function(data){
+                $(".popup-close").trigger('click');
+                reloadGrid();
+            },
+            error: function(e){
+                console.log(e);
+            }
+        })
+    }
+
+    function reloadGrid(){
+        fetch("/Applications/GetApplications/@Model.Item1/@Model.Item2")
+            .then(response => response.json())
+            .then(data => {
+                gridOptions.api.setRowData(data);
+            });
+    }
+
+    function onTransition(id){
+        $.ajax({
+            url: '/Applications/Transition',
+            data: {id: id},
+            success: function(data){
+                $(".popup-content").html(data);
+                $(".popup-window").css("display", "flex");
+            },
+            error: function(e){
+                console.log(e);
+            }
+        })
+    }
+
+    function onApproveApplication(id){
+        $.ajax({
+            url: '/Applications/ApproveApplication',
+            data: {id},
+            type: 'POST',
+            success: function(data){
+                closePopup();
+                reloadGrid();
+            },
+            error: function(e){
+                console.log(e);
+            }
+        })
+    }
+
+    function onRejectApplication(id){
+        $.ajax({
+            url: '/Applications/RejectApplication',
+            data: {id},
+            type: 'POST',
+            success: function(data){
+                closePopup();
+                reloadGrid();
+            },
+            error: function(e){
+                console.log(e);
+            }
+        })
+
+    }
+</script>
